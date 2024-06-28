@@ -1,0 +1,53 @@
+.about-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+.cases-container {
+    text-align: center;
+    padding: 20px;
+    flex: 1;
+    margin-bottom: 2rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .cases-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  
+  .case-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 430px;
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+    line-height: 2;
+  }
+  
+  .case-image {
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .case-title {
+    font-size: 1.5rem;
+    margin-top: 15px;
+  }
+  
+  .case-description {
+    font-size: 1rem;
+    color: #666;
+  }
+   .virus-icon {
+    position: relative;
+    bottom: -4.5rem;
+   }
