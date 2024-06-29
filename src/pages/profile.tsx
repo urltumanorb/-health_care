@@ -1,45 +1,44 @@
+// src/pages/profile.tsx
 import React, { useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './profile.css';
 import Footer from '@/app/components/footer';
 import Header from '@/app/components/header';
 import axios from '../utils/axios';
-
+import { useSelector } from 'react-redux';
 
 const ProfilePage = () => {
-  const [users, setUsers] = useState([]);
+  const userId = useSelector((state) => state.auth.user?.id);
+  const [userData, setUserData] = useState({
+    username: '',
+    lastName: '',
+    firstName: '',
+    phoneNumber: '',
+    email: '',
+    appointmentDate: new Date(),
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('/api/users');
-            setUsers(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    // 获取用户信息
+    axios.get(`http://localhost:3000/api/user/${userId}`)
+      .then(response => {
+        const { username, last_name, first_name, phone_number, email, appointment_date } = response.data;
+        setUserData({
+          username: username,
+          lastName: last_name,
+          firstName: first_name,
+          phoneNumber: phone_number,
+          email: email,
+          appointmentDate: appointment_date ? new Date(appointment_date) : "",
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }, [userId]);
 
-    fetchData();
-}, []);
-  const [isEditing, setIsEditing] = useState({
-    username: false,
-    phoneNumber: false,
-    email: false,
-  });
-
-  const [userData, setUserData] = useState({
-    username: 'johndoe',
-    lastName: 'Doe',
-    firstName: 'John',
-    phoneNumber: '123-456-7890',
-    email: 'john.doe@example.com',
-    appointment: '2024-06-15 14:30',
-  });
-
-  const handleEditClick = (field) => {
-    setIsEditing({ ...isEditing, [field]: true });
-  };
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setUserData({
       ...userData,
@@ -47,80 +46,102 @@ const ProfilePage = () => {
     });
   };
 
-  const handleInputBlur = (field) => {
-    setIsEditing({ ...isEditing, [field]: false });
+  const handleDateChange = (date: any) => {
+    setUserData({
+      ...userData,
+      appointmentDate: date,
+    });
   };
 
-  const handleCancelAppointment = () => {
-    setUserData({ ...userData, appointment: '' });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios.put(`http://localhost:3000/api/user/${userId}`, userData)
+      .then(response => {
+        alert('Profile updated successfully');
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+      });
   };
 
   return (
     <div className="profile-area">
-        <Header />
-        <div className="profile-page">
-            <h2>Profile Information</h2>
-            <ul>
-                {users.map((user:any) => (
-                    <li key={user.id}>{user.username}</li>
-                ))}
-            </ul>
-            <div className="profile-item">
-                <span>Username:</span>
-                {isEditing.username ? (
-                <input
-                    type="text"
-                    name="username"
-                    value={userData.username}
-                    onChange={handleInputChange}
-                    onBlur={() => handleInputBlur('username')}
-                />
-                ) : (
-                <span onClick={() => handleEditClick('username')}>{userData.username} <span className="edit-text">edit</span></span>
-                )}
-            </div>
-            <div className="profile-item">
-                <span>Last Name:</span>
-                <span>{userData.lastName}</span>
-            </div>
-            <div className="profile-item">
-                <span>First Name:</span>
-                <span>{userData.firstName}</span>
-            </div>
-            <div className="profile-item">
-                <span>Phone Number:</span>
-                {isEditing.phoneNumber ? (
-                <input
-                    type="text"
-                    name="phoneNumber"
-                    value={userData.phoneNumber}
-                    onChange={handleInputChange}
-                    onBlur={() => handleInputBlur('phoneNumber')}
-                />
-                ) : (
-                <span onClick={() => handleEditClick('phoneNumber')}>{userData.phoneNumber} <span className="edit-text">edit</span></span>
-                )}
-            </div>
-            <div className="profile-item">
-                <span>Email:</span>
-                {isEditing.email ? (
-                <input
-                    type="text"
-                    name="email"
-                    value={userData.email}
-                    onChange={handleInputChange}
-                    onBlur={() => handleInputBlur('email')}
-                />
-                ) : (
-                <span onClick={() => handleEditClick('email')}>{userData.email} <span className="edit-text">edit</span></span>
-                )}
-            </div>
-            <div className="profile-item">
-                <span>Appointment:</span>
-                <span>{userData.appointment} <span className="cancel-text" onClick={handleCancelAppointment}>cancel</span></span>
-            </div>
-            </div>
-        <Footer />
+      <Header />
+      <div className="profile-page">
+        <h2>Profile Information</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="profile-item">
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={userData.username}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="profile-item">
+            <label>Last Name:</label>
+            <input
+              type="text"
+              name="lastName"
+              value={userData.lastName}
+              disabled
+              readOnly
+            />
+          </div>
+          <div className="profile-item">
+            <label>First Name:</label>
+            <input
+              type="text"
+              name="firstName"
+              value={userData.firstName}
+              disabled
+              readOnly
+            />
+          </div>
+          <div className="profile-item">
+            <label>Phone Number:</label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={userData.phoneNumber}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="profile-item">
+            <label>Email:</label>
+            <input
+              type="text"
+              name="email"
+              value={userData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="profile-item">
+          <label>Appointment Date and Time</label>
+            {
+              userData.appointmentDate ? 
+              <DatePicker
+              selected={userData.appointmentDate}
+              onChange={handleDateChange}
+              showTimeSelect
+              dateFormat="Pp"
+              required
+            />: ''
+            }
+              
+            
+            
+          </div>
+          <div className="form-buttons">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+      <Footer />
     </div>
   );
 };

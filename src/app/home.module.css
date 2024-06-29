@@ -42,11 +42,16 @@
     color: #ffffff;
     font-weight: bold;
     font-size: 18px;
+    cursor: pointer;
   }
   
   .navbarLink:hover {
     color: #000000;
   }
+  .userIcon {
+    float: right;
+  }
+
   .container {
     display: flex;
     align-items: center;

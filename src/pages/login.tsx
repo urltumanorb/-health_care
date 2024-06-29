@@ -1,24 +1,32 @@
 // src/pages/login.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './login.css';
 import Footer from '@/app/components/footer';
 import Header from '@/app/components/header';
-import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
-// import router from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, register, clearError } from '../store/slices/authSlice';
+import { useRouter } from 'next/router';
 
+const initForm = {
+  username: '',
+  password: '',
+  confirmPassword: '',
+  phoneNumber: '',
+  email: '',
+}
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: '',
-    phoneNumber: '',
-    email: '',
-  });
+  const [formData, setFormData] = useState(initForm);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const authError = useSelector((state) => state.auth.error);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
+  useEffect(() => {
+    dispatch(clearError());
+  }, [isLogin, dispatch]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -30,64 +38,35 @@ const AuthForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLogin) {
-      // 登录逻辑
-      try {
-        await login(formData.username, formData.password);
-        // router.push('/');
-        setError('');
-      } catch (error) {
-        console.error('Error logging in:', error);
-        setError('Login failed');
-      }
+      dispatch(login(formData.username, formData.password));
     } else {
-      // 注册逻辑
       if (formData.password !== formData.confirmPassword) {
         setError('Passwords do not match');
         return;
       }
-
-      try {
-        const response = await axios.post('http://localhost:3000/api/register', formData);
-        console.log('Register Data:', response.data);
-        login();
-        setError('');
-      } catch (error) {
-        console.error('Error registering:', error);
-        if (error.response && error.response.data.error) {
-          setError(error.response.data.error);
-        } else {
-          setError('Registration failed');
-        }
-      }
+      dispatch(register(formData));
     }
   };
 
-  const handleReset = () => {
-    setFormData({
-      username: '',
-      password: '',
-      confirmPassword: '',
-      phoneNumber: '',
-      email: '',
-    });
-    setError('');
-  };
+  if (isLoggedIn) {
+    router.push('/home');
+  }
 
   return (
     <div className='login-page'>
       <Header />
       <div className="auth-form-container">
         <div className="auth-tabs">
-          <button onClick={() => setIsLogin(true)} className={isLogin ? 'active' : ''}>
+          <button onClick={() => {setIsLogin(true); setFormData(initForm); setError('')}} className={isLogin ? 'active' : ''}>
             Login
           </button>
-          <button onClick={() => setIsLogin(false)} className={!isLogin ? 'active' : ''}>
+          <button onClick={() => {setIsLogin(false); setFormData(initForm); setError('')}} className={!isLogin ? 'active' : ''}>
             Register
           </button>
         </div>
         <form onSubmit={handleSubmit} className="auth-form">
-          {error && <div className="error-message">{error}</div>}
-          <div className="form-group">
+          {(error || authError) && <div className="error-message">{error || authError}</div>}
+        <div className="form-group">
             <label>Username</label>
             <input
               type="text"

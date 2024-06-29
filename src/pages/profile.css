@@ -19,10 +19,41 @@
   }
   
   .profile-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+  }
+
+  .profile-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .profile-item input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .form-buttons, .form-buttons button {
+    width: 100%;
+  }
+  
+  .form-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .form-buttons button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .form-buttons button[type="button"] {
+    background-color: #dc3545;
+    color: white;
   }
   
   .profile-item span {
@@ -40,11 +71,5 @@
     cursor: pointer;
     margin-left: 10px;
   }
-  
-  .profile-item input {
-    flex: 1;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
+
   

@@ -1,12 +1,23 @@
+// src/pages/_app.tsx
+import { Provider } from 'react-redux';
+import store from '../store';
+import { useEffect } from 'react';
+import { loginSuccess } from '../store/slices/authSlice';
 import './globals.css';
-import { AuthProvider } from '../contexts/AuthContext';
-import type { AppProps } from 'next/app';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (token && user) {
+      store.dispatch(loginSuccess(JSON.parse(user)));
+    }
+  }, []);
+
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <Component {...pageProps} />
-    </AuthProvider>
+    </Provider>
   );
 }
 

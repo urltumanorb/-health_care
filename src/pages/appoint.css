@@ -13,6 +13,13 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     flex: 1;
   }
+.appointment-inform-container {
+  text-align: center;
+  padding-top: 7rem;
+  flex: 1;
+  font-size: 36px;
+  font-weight: 700;
+}
   
   h2 {
     text-align: center;
@@ -36,9 +43,8 @@
     border-radius: 5px;
   }
   
-  .form-buttons {
-    display: flex;
-    justify-content: space-between;
+  .form-buttons, .form-buttons button {
+    width: 100%;
   }
   
   .form-buttons button {
