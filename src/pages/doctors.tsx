@@ -2,6 +2,7 @@ import React from 'react';
 import './doctors.css';
 import Header from '@/app/components/header';
 import Footer from '@/app/components/footer';
+import withAuth from '../hoc/withAuth';
 
 const doctors = [
   {
@@ -80,4 +81,4 @@ const DoctorList = () => {
   );
 };
 
-export default DoctorList;
+export default withAuth(DoctorList);
